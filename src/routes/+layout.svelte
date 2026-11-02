@@ -1,12 +1,15 @@
 <script>
-	import './layout.css';
-	import favicon from '#lib/assets/favicon.svg';
+	import '../app.css';
 
+	// children = the page that is rendered inside this layout
 	let { children } = $props();
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<title>Tafel – Kanban</title>
+	<!-- PWA part 1: the manifest makes the app installable -->
+	<link rel="manifest" href="/manifest.webmanifest" />
+	<meta name="theme-color" content="#2f5d50" />
 </svelte:head>
 
 {@render children()}
