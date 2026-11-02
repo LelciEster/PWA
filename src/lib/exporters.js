@@ -1,3 +1,4 @@
+
 // Everything that gets data OUT of the app: download helper, CSV, ICS and Web Share.
 
 // Generic download: text -> Blob -> temporary URL -> invisible <a download> that we click
@@ -22,8 +23,9 @@ export function exportCsv(issues) {
 
 // ICS of ONE issue: an all-day calendar event on the due date
 export function exportIcs(issue) {
-	const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; // 20261102T101500Z
-	const day = issue.due.replaceAll('-', ''); // 2026-11-05 -> 20261105
+	const stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+	const day = issue.due.replaceAll('-', '');
+
 	const text = [
 		'BEGIN:VCALENDAR',
 		'VERSION:2.0',
@@ -33,26 +35,45 @@ export function exportIcs(issue) {
 		`DTSTAMP:${stamp}`,
 		`DTSTART;VALUE=DATE:${day}`,
 		`SUMMARY:${issue.title}`,
-		`DESCRIPTION:${issue.description.replaceAll('\n', '\\n')}`, // line breaks must be escaped in ICS
+		`DESCRIPTION:${issue.description.replaceAll('\n', '\\n')}`,
 		'END:VEVENT',
 		'END:VCALENDAR'
-	].join('\r\n'); // ICS needs Windows line breaks
+	].join('\r\n');
+
 	download(`${issue.title}.ics`, 'text/calendar', text);
 }
 
-// Web Share API: opens the native share menu. Not every desktop browser has it -> copy as fallback.
-// Web Share API: opens the native share menu. Not every desktop browser has it -> copy as fallback.
+// Share ONE issue using the native sharing menu or clipboard fallback
 export async function shareIssue(issue) {
 	const text = `${issue.title} (fällig am ${issue.due})\n${issue.description}`;
+
+	// 1. Try native sharing (mobile and supported browsers)
+	if (navigator.share) {
+		try {
+			await navigator.share({
+				title: issue.title,
+				text: text
+			});
+			return;
+		} catch (err) {
+			// User cancelled sharing
+			if (err.name === 'AbortError') return;
+
+			console.error('Native sharing failed:', err);
+		}
+	}
+
+	// 2. Try copying to clipboard
 	try {
-		if (navigator.share) {
-			await navigator.share({ title: issue.title, text });
-		} else {
+		if (navigator.clipboard && window.isSecureContext) {
 			await navigator.clipboard.writeText(text);
-			alert('Teilen wird nicht unterstützt – Text wurde kopiert.');
+			alert('Text wurde kopiert! Du kannst ihn jetzt teilen.');
+			return;
 		}
 	} catch (err) {
-		// AbortError = the user just closed the share menu, that is not a real error
-		if (err.name !== 'AbortError') alert('Teilen fehlgeschlagen: ' + err.message);
+		console.error('Clipboard failed:', err);
 	}
+
+	// 3. Last fallback: show text for manual copying
+	window.prompt('Kopiere diesen Text zum Teilen:', text);
 }
