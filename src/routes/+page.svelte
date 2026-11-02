@@ -1,10 +1,8 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
 <script>
-	import { LANES, board } from '$lib/store.svelte.js';
-	import { exportCsv } from '$lib/exporters.js';
-	import Lane from '$lib/components/Lane.svelte';
-	import IssueDialog from '$lib/components/IssueDialog.svelte';
+	import { LANES, board } from '#lib/store.svelte.js';
+	import { exportCsv } from '#lib/exporters.js';
+	import Lane from '#lib/components/Lane.svelte';
+	import IssueDialog from '#lib/components/IssueDialog.svelte';
 
 	let dialog; // the IssueDialog component, so we can call dialog.open()
 </script>

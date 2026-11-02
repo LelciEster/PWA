@@ -1,5 +1,5 @@
 <script>
-	import { board, moveIssue } from '$lib/store.svelte.js';
+	import { board, moveIssue } from '#lib/store.svelte.js';
 	import IssueCard from './IssueCard.svelte';
 
 	let { name } = $props(); // "Do", "Doing", "Done" or "Archiv"

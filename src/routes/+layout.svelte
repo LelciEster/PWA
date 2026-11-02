@@ -1,5 +1,5 @@
 <script>
-	import '../app.css';
+	import './layout.css';
 
 	// children = the page that is rendered inside this layout
 	let { children } = $props();

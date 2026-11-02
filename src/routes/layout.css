@@ -1,8 +1,4 @@
-@import 'tailwindcss';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
-
-/* Tailwind + our own "paper & ink" colour palette (warm, not the usual purple-gradient look) */
+/* Tailwind + our own "paper & ink" colour palette */
 @import 'tailwindcss';
 
 @theme {

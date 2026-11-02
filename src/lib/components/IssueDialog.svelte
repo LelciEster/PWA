@@ -1,8 +1,8 @@
 <script>
 	import { format } from 'date-fns';
-	import { addIssue } from '$lib/store.svelte.js';
+	import { addIssue } from '#lib/store.svelte.js';
 
-	let dialog; // reference to the <dialog> element (set by bind:this)
+	let dialog; // reference to the <dialog> element (set by bind:this below)
 
 	// The parent page calls this to show the dialog
 	export function open() {
@@ -25,8 +25,12 @@
 	const input = 'w-full rounded border border-line bg-paper px-2 py-1';
 </script>
 
-<!-- m-auto: Tailwind resets the margin, so we centre the dialog again -->
-<dialog class="m-auto w-full max-w-md rounded-lg bg-card p-6 backdrop:bg-ink/40">
+<!-- bind:this stores this element in the variable "dialog".
+     m-auto: Tailwind resets the margin, so we centre the dialog again -->
+<dialog
+	bind:this={dialog}
+	class="m-auto w-full max-w-md rounded-lg bg-card p-6 backdrop:bg-ink/40"
+>
 	<form method="dialog" onsubmit={save} class="flex flex-col gap-3">
 		<h2 class="font-serif text-xl font-bold">Neues Issue</h2>
 

@@ -2,8 +2,8 @@
 	// date-fns: nice, readable dates (German locale)
 	import { format, formatDistanceToNow, parseISO, endOfDay, isPast } from 'date-fns';
 	import { de } from 'date-fns/locale';
-	import { LANES, moveIssue, deleteIssue } from '$lib/store.svelte.js';
-	import { exportIcs, shareIssue } from '$lib/exporters.js';
+	import { LANES, moveIssue, deleteIssue } from '#lib/store.svelte.js';
+	import { exportIcs, shareIssue } from '#lib/exporters.js';
 
 	let { issue } = $props(); // the issue object comes from the Lane
 

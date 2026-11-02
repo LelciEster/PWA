@@ -41,12 +41,18 @@ export function exportIcs(issue) {
 }
 
 // Web Share API: opens the native share menu. Not every desktop browser has it -> copy as fallback.
+// Web Share API: opens the native share menu. Not every desktop browser has it -> copy as fallback.
 export async function shareIssue(issue) {
 	const text = `${issue.title} (fällig am ${issue.due})\n${issue.description}`;
-	if (navigator.share) {
-		await navigator.share({ title: issue.title, text }).catch(() => {}); // user cancelled -> ignore
-	} else {
-		await navigator.clipboard.writeText(text);
-		alert('Teilen wird nicht unterstützt – Text wurde kopiert.');
+	try {
+		if (navigator.share) {
+			await navigator.share({ title: issue.title, text });
+		} else {
+			await navigator.clipboard.writeText(text);
+			alert('Teilen wird nicht unterstützt – Text wurde kopiert.');
+		}
+	} catch (err) {
+		// AbortError = the user just closed the share menu, that is not a real error
+		if (err.name !== 'AbortError') alert('Teilen fehlgeschlagen: ' + err.message);
 	}
 }
