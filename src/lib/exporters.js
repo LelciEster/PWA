@@ -44,10 +44,11 @@ export function exportIcs(issue) {
 }
 
 // Share ONE issue using the native sharing menu or clipboard fallback
+
 export async function shareIssue(issue) {
 	const text = `${issue.title} (fällig am ${issue.due})\n${issue.description}`;
 
-	// 1. Try native sharing (mobile and supported browsers)
+	// 1. Native share menu
 	if (navigator.share) {
 		try {
 			await navigator.share({
@@ -56,14 +57,12 @@ export async function shareIssue(issue) {
 			});
 			return;
 		} catch (err) {
-			// User cancelled sharing
 			if (err.name === 'AbortError') return;
-
 			console.error('Native sharing failed:', err);
 		}
 	}
 
-	// 2. Try copying to clipboard
+	// 2. Modern clipboard
 	try {
 		if (navigator.clipboard && window.isSecureContext) {
 			await navigator.clipboard.writeText(text);
@@ -71,9 +70,32 @@ export async function shareIssue(issue) {
 			return;
 		}
 	} catch (err) {
-		console.error('Clipboard failed:', err);
+		console.error('Clipboard API failed:', err);
 	}
 
-	// 3. Last fallback: show text for manual copying
+	// 3. Older browser / installed PWA fallback
+	try {
+		const textarea = document.createElement('textarea');
+		textarea.value = text;
+		textarea.style.position = 'fixed';
+		textarea.style.left = '-9999px';
+		textarea.style.top = '0';
+
+		document.body.appendChild(textarea);
+		textarea.focus();
+		textarea.select();
+
+		const copied = document.execCommand('copy');
+		textarea.remove();
+
+		if (copied) {
+			alert('Text wurde kopiert! Du kannst ihn jetzt teilen.');
+			return;
+		}
+	} catch (err) {
+		console.error('Legacy clipboard failed:', err);
+	}
+
+	// 4. Last resort
 	window.prompt('Kopiere diesen Text zum Teilen:', text);
 }
